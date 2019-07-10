@@ -9,10 +9,10 @@ const PROTO_PATH = 'messages.proto';
 const serviceDef = grpc.load(PROTO_PATH);
 const creds = grpc.credentials.createInsecure()
 // const client = new serviceDef.EmployeeConsumerService(`localhost:${GRPC_PORT}`, creds);
-const grpc_client = new serviceDef.EmployeeProducerService(`10.0.102.166:${GRPC_PORT}`, creds);
+// const grpc_client = new serviceDef.EmployeeProducerService(`10.0.102.166:${GRPC_PORT}`, creds);
 // const client = new serviceDef.EmployeeConsumerService(`172.24.235.1:${GRPC_PORT}`, creds);
 const GRPC_HOST = process.env.GRPC_SERVER_IP;
-// const client = new serviceDef.EmployeeConsumerService(`${GRPC_HOST}`, creds);
+const grpc_client = new serviceDef.EmployeeProducerService(`${GRPC_HOST}`, creds);
 
 
 function routes() {
@@ -28,12 +28,16 @@ function routes() {
       console.log(emp);
         grpc_client.save({employee: emp}, function(err, response) {
          if (err) {
+          
              console.log("Logging Error" + err);
+             return res.json(err.details);
          } else {
-             console.log("Logging Success " + response);
+            const message= "Persisted Successfully";
+            console.log("Logging Success " + response);
+            return res.json(message);
          }
      });
-       return res.json("Persisted Successfully");
+       
     });
 
     return employeeRouter;
